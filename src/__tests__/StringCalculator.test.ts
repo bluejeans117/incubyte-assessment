@@ -26,4 +26,8 @@ describe('StringCalculator', () => {
   it('should return the sum of numbers separated by new lines', () => {
     expect(calculator.add('1,2\n3\n4\n5')).toBe(15);
   });
+
+  it('should return the sum of numbers separated by custom delimiter', () => {
+    expect(calculator.add('//;\n1;2;3;4;5')).toBe(15);
+  });
 });
