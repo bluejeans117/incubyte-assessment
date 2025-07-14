@@ -18,5 +18,9 @@ describe('StringCalculator', () => {
   it('should return the sum of single number', () => {
     expect(calculator.add('1')).toBe(1);
   });
+
+  it('should return the sum of multiple numbers separated by commas', () => {
+    expect(calculator.add('1,2,3,4,5')).toBe(15);
+  });
 });
 
