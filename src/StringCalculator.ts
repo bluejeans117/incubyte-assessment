@@ -10,8 +10,18 @@ export class StringCalculator {
         .split(customDelimiter)
         .reduce((acc, num) => acc + Number(num), 0);
     }
+    const negatives: number[] = [];
     if (numbers.includes(',') || numbers.includes('\n')) {
-      return numbers.split(/,|\n/).reduce((acc, num) => acc + Number(num), 0);
+      const sum = numbers.split(/,|\n/).reduce((acc, num) => {
+        if (Number(num) < 0) {
+          negatives.push(Number(num));
+        }
+        return acc + Number(num);
+      }, 0);
+      if (negatives.length > 0) {
+        throw new Error(`negative numbers not allowed ${negatives.join(', ')}`);
+      }
+      return sum;
     }
     return Number(numbers);
   }

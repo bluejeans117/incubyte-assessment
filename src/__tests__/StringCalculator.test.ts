@@ -30,4 +30,16 @@ describe('StringCalculator', () => {
   it('should return the sum of numbers separated by custom delimiter', () => {
     expect(calculator.add('//;\n1;2;3;4;5')).toBe(15);
   });
+
+  it('should throw error for single negative number', () => {
+    expect(() => calculator.add('-1,2,3')).toThrow(
+      'negative numbers not allowed -1'
+    );
+  });
+
+  it('should throw error for all negative numbers', () => {
+    expect(() => calculator.add('-1,-2,-3,-4,-5')).toThrow(
+      'negative numbers not allowed -1, -2, -3, -4, -5'
+    );
+  });
 });
