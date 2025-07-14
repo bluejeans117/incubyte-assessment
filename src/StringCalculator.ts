@@ -8,29 +8,32 @@ export class StringCalculator {
     if (delimiter.startsWith('//')) {
       const customDelimiter = delimiter.slice(2);
       const sum = rest.split(customDelimiter).reduce((acc, num) => {
-        if (Number(num) < 0) {
-          negatives.push(Number(num));
-        }
-        if (Number(num) > 1000) {
-          return acc;
-        }
-        return acc + Number(num);
+        this.checkNegativeAndPush(negatives, Number(num));
+        return this.checkNumberGreaterThan1000AndReturnAcc(acc, Number(num));
       }, 0);
       return this.returnSumOrNegativeError(sum, negatives);
     }
     if (numbers.includes(',') || numbers.includes('\n')) {
       const sum = numbers.split(/,|\n/).reduce((acc, num) => {
-        if (Number(num) < 0) {
-          negatives.push(Number(num));
-        }
-        if (Number(num) > 1000) {
-          return acc;
-        }
-        return acc + Number(num);
+        this.checkNegativeAndPush(negatives, Number(num));
+        return this.checkNumberGreaterThan1000AndReturnAcc(acc, Number(num));
       }, 0);
       return this.returnSumOrNegativeError(sum, negatives);
     }
     return Number(numbers);
+  }
+
+  checkNegativeAndPush(negatives: number[], num: number) {
+    if (num < 0) {
+      negatives.push(num);
+    }
+  }
+
+  checkNumberGreaterThan1000AndReturnAcc(acc: number, num: number) {
+    if (num > 1000) {
+      return acc;
+    }
+    return acc + num;
   }
 
   returnSumOrNegativeError(sum: number, negatives: number[]) {
