@@ -42,4 +42,16 @@ describe('StringCalculator', () => {
       'negative numbers not allowed -1, -2, -3, -4, -5'
     );
   });
+
+  it('should throw error for single negative number with custom delimiter', () => {
+    expect(() => calculator.add('//;\n-1;2;3;4;5')).toThrow(
+      'negative numbers not allowed -1'
+    );
+  });
+
+  it('should throw error for all negative numbers with custom delimiter', () => {
+    expect(() => calculator.add('//;\n-1;-2;-3;-4;-5')).toThrow(
+      'negative numbers not allowed -1, -2, -3, -4, -5'
+    );
+  });
 });
