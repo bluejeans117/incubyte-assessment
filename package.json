@@ -1,0 +1,23 @@
+{
+  "name": "string-calculator",
+  "version": "1.0.0",
+  "description": "Assignment for the role of Software Craftsperson - Nodejs/Reactjs",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "author": "Vishnu R <vishnurajesh45@gmail.com>",
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.1.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/jest": "^29.5.0"
+  }
+}
+
