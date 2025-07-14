@@ -6,7 +6,12 @@ export class StringCalculator {
     const negatives: number[] = [];
     const [delimiter, rest] = numbers.split('\n', 2);
     if (delimiter.startsWith('//')) {
-      const customDelimiter = delimiter.slice(2);
+      let customDelimiter = '';
+      if (delimiter.length === 3) {
+        customDelimiter = delimiter.slice(2);
+      } else {
+        customDelimiter = delimiter.slice(3, delimiter.length - 1);
+      }
       const sum = rest.split(customDelimiter).reduce((acc, num) => {
         this.checkNegativeAndPush(negatives, Number(num));
         return this.checkNumberGreaterThan1000AndReturnAcc(acc, Number(num));

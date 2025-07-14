@@ -62,4 +62,8 @@ describe('StringCalculator', () => {
   it('should ignore numbers greater than 1000 with custom delimiter', () => {
     expect(calculator.add('//;\n1;2;1001')).toBe(3);
   });
+
+  it('should return the sum of numbers separated by custom delimiter with more than 1 character', () => {
+    expect(calculator.add('//[***]\n1***2***3***4***5')).toBe(15);
+  });
 });
