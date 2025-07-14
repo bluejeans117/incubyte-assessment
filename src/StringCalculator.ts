@@ -20,6 +20,9 @@ export class StringCalculator {
         if (Number(num) < 0) {
           negatives.push(Number(num));
         }
+        if (Number(num) > 1000) {
+          return acc;
+        }
         return acc + Number(num);
       }, 0);
       return this.returnSumOrNegativeError(sum, negatives);

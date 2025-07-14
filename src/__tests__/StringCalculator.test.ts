@@ -54,4 +54,8 @@ describe('StringCalculator', () => {
       'negative numbers not allowed -1, -2, -3, -4, -5'
     );
   });
+
+  it('should ignore numbers greater than 1000', () => {
+    expect(calculator.add('1,2,1001')).toBe(3);
+  });
 });
