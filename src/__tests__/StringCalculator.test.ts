@@ -58,4 +58,8 @@ describe('StringCalculator', () => {
   it('should ignore numbers greater than 1000', () => {
     expect(calculator.add('1,2,1001')).toBe(3);
   });
+
+  it('should ignore numbers greater than 1000 with custom delimiter', () => {
+    expect(calculator.add('//;\n1;2;1001')).toBe(3);
+  });
 });
