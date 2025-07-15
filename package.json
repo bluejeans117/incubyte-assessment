@@ -2,11 +2,18 @@
   "name": "string-calculator",
   "version": "1.0.0",
   "description": "Assignment for the role of Software Craftsperson - Nodejs/Reactjs",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "clean": "rimraf dist coverage",
     "test": "jest",
-    "build": "tsc",
-    "start": "node dist/index.js"
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "build": "npm run clean && tsc -p tsconfig.json",
+    "prepublishOnly": "npm run test && npm run build"
   },
   "author": "Vishnu R <vishnurajesh45@gmail.com>",
   "devDependencies": {
