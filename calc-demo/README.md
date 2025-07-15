@@ -1,69 +1,105 @@
-# React + TypeScript + Vite
+# React Demo – Calculator Demo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Tiny React + Vite application that consumes the **string-calculator** Node/TS library and shows the running total as you type.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## What it demonstrates
 
-## Expanding the ESLint configuration
+- Integrating a TypeScript Node package into a browser bundle
+- React state + error handling
+- End-to-end tests with Vitest & Testing-Library
+- Lightning-fast HMR via Vite
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Quick start
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+```bash
+# 1 · install demo dependencies
+cd calc-demo
+npm install
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# 2 · link the freshly-built library (path to repo root)
+npm install <repo-root> --legacy-peer-deps
+
+# 3 · start dev server
+npm run dev            # open http://localhost:5173
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Tests & coverage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm test               # Vitest + jsdom
+npm test -- --coverage
+open coverage/lcov-report/index.html
 ```
+
+---
+
+## Available npm scripts
+
+| Script          | Purpose                     |
+| --------------- | --------------------------- |
+| `npm run dev`   | Vite dev server + HMR       |
+| `npm run build` | Production build to `dist/` |
+| `npm test`      | Vitest UI tests             |
+| `npm run lint`  | ESLint (if you wired it up) |
+
+---
+
+## Project layout
+
+```
+src/App.tsx                   main component
+src/App.integration.test.tsx  UI tests (Vitest + RTL)
+src/setupTests.ts             jest-dom matchers
+vite.config.ts                Vite / Vitest config
+coverage/                     generated test coverage
+index.html                    Vite entry point
+```
+
+---
+
+## Usage example (inside React)
+
+```tsx
+import { useState } from 'react';
+import { StringCalculator } from 'string-calculator';
+
+const calc = new StringCalculator();
+
+export default function CalculatorWidget() {
+  const [raw, setRaw] = useState('');
+  const [sum, setSum] = useState<number | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+
+  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const input = e.target.value;
+    setRaw(input);
+
+    try {
+      // replace literal "\n" with real new-lines for the calculator
+      setSum(calc.add(input.replace(/\\n/g, '\n')));
+      setErr(null);
+    } catch (ex) {
+      setSum(null);
+      setErr((ex as Error).message);
+    }
+  };
+
+  return (
+    <>
+      <textarea value={raw} onChange={onChange} rows={4} />
+      {sum !== null && <p>Sum: {sum}</p>}
+      {err && <p style={{ color: 'crimson' }}>{err}</p>}
+    </>
+  );
+}
+```
+
+---
+
+## License
+
+MIT – [see root project](../README.md).
