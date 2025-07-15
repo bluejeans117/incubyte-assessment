@@ -1,37 +1,66 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
 
-describe('String-Calculator UI', () => {
-  it('computes sum for commas + \\n', async () => {
+const enterText = async (value: string) => {
+  const box = screen.getByRole('textbox') as HTMLTextAreaElement;
+
+  await userEvent.clear(box); // value now ''
+
+  if (value === '') {
+    fireEvent.change(box, { target: { value: ' ' } }); // 1. space
+    fireEvent.change(box, { target: { value: '' } }); // 2. back to empty
+  } else {
+    fireEvent.change(box, { target: { value } });
+  }
+};
+
+describe('String-Calculator UI – happy paths', () => {
+  const cases = [
+    { in: '', out: '0' },
+    { in: '1,2', out: '3' },
+    { in: '1', out: '1' },
+    { in: '1,2,3,4,5', out: '15' },
+    { in: '1,2\\n3\\n4\\n5', out: '15' },
+    { in: '//;\\n1;2;3;4;5', out: '15' },
+    { in: '//[***]\\n1***2***3***4***5', out: '15' },
+    { in: '//[***][%%]\\n1***2%%3***4%%5', out: '15' },
+    { in: '//[.*]\\n1.*2.*3', out: '6' },
+    { in: '//[;][***]\\n1;2***3;4', out: '10' },
+    { in: '//[***][%]\\n1000***1001%2', out: '1002' },
+    { in: '//[;]\\n', out: '0' },
+    { in: '1,2,', out: '3' },
+    {
+      in: Array.from({ length: 100 }, (_, i) => i + 1).join(','),
+      out: '5050',
+    },
+  ] as const;
+
+  it.each(cases)('%s ⇒ %s', async ({ in: input, out }) => {
     render(<App />);
+    await enterText(input);
 
-    const box = screen.getByRole('textbox');
-    // type "1,2\n3" literally – the component converts \n to newline
-    await userEvent.type(box, '1,2\\n3');
-
-    expect(screen.getByText(/sum:/i)).toHaveTextContent('6');
+    const sum = await screen.findByText(/sum:/i); // ← wait for render
+    expect(sum).toHaveTextContent(out);
   });
+});
 
-  it('computes sum for custom delimiter header', async () => {
+describe('String-Calculator UI – negative numbers', () => {
+  const negs = [
+    { in: '-1,2,3', list: '-1' },
+    { in: '-1,-2,-3', list: '-1, -2, -3' },
+    { in: '//;\\n-1;2;3', list: '-1' },
+    { in: '//;\\n-1;-2;-3', list: '-1, -2, -3' },
+    { in: '//[***][%]\\n-1***2%3***-4', list: '-1, -4' },
+  ] as const;
+
+  it.each(negs)('error for "%s"', async ({ in: input, list }) => {
     render(<App />);
-    const box = screen.getByRole('textbox');
+    await enterText(input);
 
-    await userEvent.clear(box);
-    await userEvent.type(box, '//;\\n1;2;3;4;5');
-
-    expect(screen.getByText(/sum:/i)).toHaveTextContent('15');
-  });
-
-  it('shows error when negatives are entered', async () => {
-    render(<App />);
-    const box = screen.getByRole('textbox');
-
-    await userEvent.clear(box);
-    await userEvent.type(box, '1,-2');
-
-    expect(
-      screen.getByText(/negative numbers not allowed/i)
-    ).toBeInTheDocument();
+    const err = await screen.findByText(
+      new RegExp(`negative numbers not allowed.*${list}`)
+    );
+    expect(err).toBeInTheDocument();
   });
 });
