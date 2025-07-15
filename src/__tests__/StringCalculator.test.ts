@@ -70,4 +70,41 @@ describe('StringCalculator', () => {
   it('should return the sum of numbers separated by multiple custom delimiters', () => {
     expect(calculator.add('//[***][%%]\n1***2%%3***4%%5')).toBe(15);
   });
+
+  it('should support a delimiter that contains regex meta-characters', () => {
+    // The delimiter is ".*" which includes '.' and '*'
+    expect(calculator.add('//[.*]\n1.*2.*3')).toBe(6);
+  });
+
+  it('should handle a mix of single-char and multi-char delimiters', () => {
+    // ";" (1 char) and "***" (3 chars) in the same header
+    expect(calculator.add('//[;][***]\n1;2***3;4')).toBe(10);
+  });
+
+  it('should include 1000 but skip numbers >1000 with custom delimiters', () => {
+    // 1000 is counted, 1001 is ignored
+    expect(calculator.add('//[***][%]\n1000***1001%2')).toBe(1002);
+  });
+
+  it('should return 0 when the string has custom delimiters but no numbers', () => {
+    // After the \n there is nothing
+    expect(calculator.add('//[;]\n')).toBe(0);
+  });
+
+  it('should throw and list all negative numbers when multiple delimiters are used', () => {
+    expect(() => calculator.add('//[***][%]\n-1***2%3***-4')).toThrow(
+      'negative numbers not allowed -1, -4'
+    );
+  });
+
+  it('should ignore a trailing delimiter at the end of the string', () => {
+    // Common user typo: dangling comma
+    expect(calculator.add('1,2,')).toBe(3);
+  });
+
+  it('should correctly sum a long list of numbers', () => {
+    const input = Array.from({ length: 100 }, (_, i) => i + 1).join(',');
+    const expected = (100 * 101) / 2; // 5050
+    expect(calculator.add(input)).toBe(expected);
+  });
 });
