@@ -66,4 +66,8 @@ describe('StringCalculator', () => {
   it('should return the sum of numbers separated by custom delimiter with more than 1 character', () => {
     expect(calculator.add('//[***]\n1***2***3***4***5')).toBe(15);
   });
+
+  it('should return the sum of numbers separated by multiple custom delimiters', () => {
+    expect(calculator.add('//[***][%%]\n1***2%%3***4%%5')).toBe(15);
+  });
 });

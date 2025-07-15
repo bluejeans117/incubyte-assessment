@@ -10,11 +10,29 @@ export class StringCalculator {
       if (delimiter.length === 3) {
         customDelimiter = delimiter.slice(2);
       } else {
-        customDelimiter = delimiter.slice(3, delimiter.length - 1);
+        // Extract all delimiters from the format //[.*][.*]
+        const delimiterPattern = /\[(.+?)\]/g;
+        const matches = delimiter.match(delimiterPattern);
+        if (matches) {
+          // Escape special regex characters and create regex pattern
+          const escapedDelimiters = matches.map((match) => {
+            const delimiter = match.slice(1, -1);
+            // Escape special regex characters
+            return delimiter.replace(/[-/^$*+?.()|[\]{}]/g, '\\$&');
+          });
+          customDelimiter = escapedDelimiters.join('|');
+        }
       }
-      const sum = rest.split(customDelimiter).reduce((acc, num) => {
-        this.checkNegativeAndPush(negatives, Number(num));
-        return this.checkNumberGreaterThan1000AndReturnAcc(acc, Number(num));
+      // Escape the custom delimiter string and create regex
+      const regex = new RegExp(customDelimiter, 'g');
+      // Split and filter out empty strings that might result from consecutive delimiters
+      const numbersArray = rest.split(regex).filter((num) => num.trim() !== '');
+      const sum = numbersArray.reduce((acc, num) => {
+        this.checkNegativeAndPush(negatives, Number(num.trim()));
+        return this.checkNumberGreaterThan1000AndReturnAcc(
+          acc,
+          Number(num.trim())
+        );
       }, 0);
       return this.returnSumOrNegativeError(sum, negatives);
     }
@@ -48,3 +66,4 @@ export class StringCalculator {
     return sum;
   }
 }
+
