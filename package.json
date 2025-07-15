@@ -14,6 +14,7 @@
     "coverage": "jest --coverage",
     "build": "npm run clean && tsc -p tsconfig.json",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings 0",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "npm run lint && npm run test && npm run build"
   },
   "author": "Vishnu R <vishnurajesh45@gmail.com>",
@@ -26,6 +27,7 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jest": "^29.0.1",
     "jest": "^29.5.0",
+    "prettier": "^3.6.2",
     "rimraf": "^6.0.1",
     "ts-jest": "^29.1.0",
     "typescript": "^5.0.0"
