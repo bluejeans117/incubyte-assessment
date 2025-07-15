@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main] # adjust if you use a different default branch
+  pull_request:
+
+jobs:
+  build-test-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out code
+      - uses: actions/checkout@v4
+
+      # Set up Node + npm cache
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm # built-in npm cache
+
+      # Install root deps (library + dev tools)
+      - run: npm ci
+
+      # Lint the TypeScript library (and fail on warnings)
+      - name: ESLint (library)
+        run: npm run lint
+
+      # Run Jest with coverage for the library
+      - name: Jest (core package)
+        run: npm run coverage
+
+      # Build the library -> dist  (needed for the demo install)
+      - name: Build library
+        run: npm run build
+
+      # ------- React demo -------------------------------------------------
+      #      Install demo deps and link the freshly built library
+      - name: Install demo dependencies
+        working-directory: ./calc-demo
+        run: |
+          npm ci
+          # install the local library build; the path ".." resolves to repo root
+          npm install ..
+
+      # Run Vitest for the React demo
+      - name: Vitest (React demo)
+        working-directory: ./calc-demo
+        run: npm test -- --coverage
+
+      # Upload both coverage folders
+      - name: Upload coverage (library & demo)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            coverage           # Jest output
+            calc-demo/coverage # Vitest output
