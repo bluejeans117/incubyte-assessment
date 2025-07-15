@@ -2,8 +2,15 @@
   "name": "string-calculator",
   "version": "1.0.0",
   "description": "Assignment for the role of Software Craftsperson - Nodejs/Reactjs",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/StringCalculator.js",
+  "module": "dist/StringCalculator.mjs",
+  "types": "dist/StringCalculator.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/StringCalculator.js",
+      "import": "./dist/StringCalculator.mjs"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -12,7 +19,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "build": "npm run clean && tsc -p tsconfig.json",
+    "build": "tsup src/StringCalculator.ts --dts --format cjs,esm --out-dir dist",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings 0",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "npm run lint && npm run test && npm run build"
@@ -30,10 +37,10 @@
     "prettier": "^3.6.2",
     "rimraf": "^6.0.1",
     "ts-jest": "^29.1.0",
+    "tsup": "^8.5.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
     "@types/jest": "^29.5.0"
   }
 }
-
